@@ -22,8 +22,9 @@
 
 
 import flask
-from flask import Flask, request
+from flask import Flask, request, redirect, Response
 import json
+import ast
 app = Flask(__name__)
 app.debug = True
 
@@ -74,27 +75,49 @@ def flask_post_json():
 @app.route("/")
 def hello():
     '''Return something coherent here.. perhaps redirect to /static/index.html '''
-    return None
+    return redirect("http://127.0.0.1:5000/static/index.html", 200)
 
+
+'''
+Source:
+https://www.codegrepper.com/code-examples/python/convert+bytes+to+dict+python
+Antonio Buccola: https://www.codegrepper.com/profile/antonio-buccola
+Used his code for turning the byte data into a useable dictionary
+'''
 @app.route("/entity/<entity>", methods=['POST','PUT'])
 def update(entity):
     '''update the entities via this interface'''
-    return None
+    if request.method == 'POST':
+        myWorld.set(entity)
+        return 200
+    elif request.method == 'PUT':
+        byte_str = request.data
+        dict_str = byte_str.decode("UTF-8")
+        dict_data = ast.literal_eval(dict_str)
+        for key in dict_data:
+            myWorld.update(entity, key, dict_data[key])
+
+        return json.dumps(dict_data), 200
+
 
 @app.route("/world", methods=['POST','GET'])    
 def world():
     '''you should probably return the world here'''
-    return None
+    return myWorld.world()
 
 @app.route("/entity/<entity>")    
 def get_entity(entity):
     '''This is the GET version of the entity interface, return a representation of the entity'''
-    return None
+    try:
+        return myWorld.get(entity), 200
+    except:
+        return 404
 
 @app.route("/clear", methods=['POST','GET'])
 def clear():
     '''Clear the world out!'''
-    return None
+    myWorld.clear()
+    return Response(status=200)
 
 if __name__ == "__main__":
     app.run()
