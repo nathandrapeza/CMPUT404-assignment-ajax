@@ -88,8 +88,13 @@ Used his code for turning the byte data into a useable dictionary
 def update(entity):
     '''update the entities via this interface'''
     if request.method == 'POST':
-        myWorld.set(entity)
-        return 200
+        byte_str = request.data
+        dict_str = byte_str.decode("UTF-8")
+        dict_data = ast.literal_eval(dict_str)
+        for key in dict_data:
+            myWorld.set(entity, key, dict_data[key])
+        return json.dumps(dict_data), 200
+        
     elif request.method == 'PUT':
         byte_str = request.data
         dict_str = byte_str.decode("UTF-8")
