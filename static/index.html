@@ -74,16 +74,27 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
 world = {};
 
 //XXX: TODO Make this prettier!
+
+/*
+Source: https://www.w3schools.com/tags/canvas_shadowcolor.asp
+For: shadowBlur/shadowColor
+*/
 function drawCircle(context,entity) {
     with(context) {
         beginPath();              
-        lineWidth = 1;
+        lineWidth = 8;
         var x = entity["x"];
         var y = entity["y"];
-        //moveTo(x,y);
+        
         fillStyle = entity["colour"];
+    
         strokeStyle = fillStyle;
-        arc(x, y, (entity["radius"])?entity["radius"]:0, 0, 2.0 * Math.PI, false);  
+        arc(x, y, (entity["radius"])?entity["radius"]:0, 0, 2.0 * Math.PI, false);
+        arc(x-1, y-1, (entity["radius"])?entity["radius"]:0, 0, 2.0 * Math.PI, false);
+        arc(x+1, y+1, (entity["radius"])?entity["radius"]:0, 0, 2.0 * Math.PI, false);
+        fill();
+        shadowBlur = 10;
+        shadowColor = "white";
         stroke();                                
     }
 }
